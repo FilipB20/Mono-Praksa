@@ -7,11 +7,6 @@ namespace MonoPraksa.Service
     public class WeatherForecastService : IWeatherForecastService
     {
         private IWeatherForecastRepository weatherForecastRepository;
-        private static readonly List<WeatherForecast> weatherForecasts = new()
-        {
-            new WeatherForecast { Id = 0, Date = DateOnly.FromDateTime(DateTime.Now), TemperatureC = 20, Summary = "Mild" },
-            new WeatherForecast { Id = 1, Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), TemperatureC = 25, Summary = "Warm" }
-        };
 
         public WeatherForecastService(IWeatherForecastRepository weatherForecastRepository)
         {
@@ -19,12 +14,12 @@ namespace MonoPraksa.Service
         }
         public IEnumerable<WeatherForecast> GetAllWeatherForecasts()
         {
-            return weatherForecasts;
+            return weatherForecastRepository.GetAllWeatherForecasts();
         }
 
         public WeatherForecast GetById(int id)
         {
-            var weatherForecast = weatherForecasts.FirstOrDefault(w => w.Id == id);
+            var weatherForecast = weatherForecastRepository.GetById(id);
             if (weatherForecast == null) return null;
             return weatherForecast;
         }
@@ -33,6 +28,7 @@ namespace MonoPraksa.Service
         public IEnumerable<WeatherForecast> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter)
         {
             List<WeatherForecast> forecasts = new List<WeatherForecast>();
+            IEnumerable<WeatherForecast> weatherForecasts = weatherForecastRepository.GetAllWeatherForecasts();
             foreach (var forecast in weatherForecasts)
             {
                 if (forecast.TemperatureC >= weatherForecastFilter.TemperatureC && forecast.Date.CompareTo(weatherForecastFilter.Date) > 0)
@@ -46,25 +42,24 @@ namespace MonoPraksa.Service
         public bool Post(WeatherForecast weatherForecast)
         {
             if(weatherForecast == null) return false;
-            weatherForecasts.Add(weatherForecast);
+            weatherForecastRepository.Post(weatherForecast);
             return true;
         }
 
        public bool Delete(int id)
         {
-            var weatherForecast = weatherForecasts.FirstOrDefault(w => w.Id == id);
+            var weatherForecast = weatherForecastRepository.GetById(id);
             if (weatherForecast == null)
             {
                 return false;
             }
-            weatherForecasts.Remove(weatherForecast);
-            return true;
-            
+            weatherForecastRepository.Delete(weatherForecast);
+            return true; 
         }
         
         public bool Put(int id, String newSummary)
         {
-            var item = weatherForecasts.FirstOrDefault(w => w.Id == id);
+            var item = weatherForecastRepository.GetById(id);
             if (item == null)
             {
                 return false;

@@ -26,6 +26,7 @@ namespace MonoPraksa.Controllers
         public IEnumerable<WeatherForecast> Get()
         {
             return weatherForecastService.GetAllWeatherForecasts();
+            return weatherForecastService.GetAllWeatherForecasts();
         }
 
         [HttpGet("{id}",Name = "GetWeatherForecastById")]
