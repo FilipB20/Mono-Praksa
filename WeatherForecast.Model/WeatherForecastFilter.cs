@@ -1,4 +1,4 @@
-﻿namespace Mono_Praksa
+﻿namespace MonoPraksa.Model
 {
     public class WeatherForecastFilter
     {

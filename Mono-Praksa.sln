@@ -1,9 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36414.22 d17.14
+VisualStudioVersion = 17.14.36414.22
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono-Praksa", "Mono-Praksa\Mono-Praksa.csproj", "{33C7B40B-1520-45CE-B5AB-C1E8731C62B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoPraksa.WebApi", "Mono-Praksa\MonoPraksa.WebApi.csproj", "{33C7B40B-1520-45CE-B5AB-C1E8731C62B4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96} = {14DCBA91-074E-4BC4-AED7-CA6896C8ED96}
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82} = {B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}
+		{D982FF55-9E67-43EE-9687-2808BA505CB3} = {D982FF55-9E67-43EE-9687-2808BA505CB3}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoPraksa.Service", "WeatherForecast.Service\MonoPraksa.Service.csproj", "{D982FF55-9E67-43EE-9687-2808BA505CB3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{08CB18C0-5658-4321-8517-21A653D485CD} = {08CB18C0-5658-4321-8517-21A653D485CD}
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96} = {14DCBA91-074E-4BC4-AED7-CA6896C8ED96}
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82} = {B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoPraksa.Repository", "WeatherForecast.Repository\MonoPraksa.Repository.csproj", "{08CB18C0-5658-4321-8517-21A653D485CD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96} = {14DCBA91-074E-4BC4-AED7-CA6896C8ED96}
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82} = {B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoPraksa.Common", "WeatherForecast.Common\MonoPraksa.Common.csproj", "{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoPraksa.Model", "WeatherForecast.Model\MonoPraksa.Model.csproj", "{14DCBA91-074E-4BC4-AED7-CA6896C8ED96}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +37,22 @@ Global
 		{33C7B40B-1520-45CE-B5AB-C1E8731C62B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33C7B40B-1520-45CE-B5AB-C1E8731C62B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33C7B40B-1520-45CE-B5AB-C1E8731C62B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D982FF55-9E67-43EE-9687-2808BA505CB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D982FF55-9E67-43EE-9687-2808BA505CB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D982FF55-9E67-43EE-9687-2808BA505CB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D982FF55-9E67-43EE-9687-2808BA505CB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08CB18C0-5658-4321-8517-21A653D485CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08CB18C0-5658-4321-8517-21A653D485CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08CB18C0-5658-4321-8517-21A653D485CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08CB18C0-5658-4321-8517-21A653D485CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9DACCEF-0150-49B4-BE5C-F7D87A13EC82}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14DCBA91-074E-4BC4-AED7-CA6896C8ED96}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
