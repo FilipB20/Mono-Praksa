@@ -1,5 +1,6 @@
-using MonoPraksa.Service;
+using Microsoft.EntityFrameworkCore;
 using MonoPraksa.Repository;
+using MonoPraksa.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
 builder.Services.AddScoped<IWeatherForecastRepository, WeatherForecastRepository>();
+builder.Services.AddScoped<DbContext, AppDbContext>();
+builder.Services.AddDbContext<AppDbContext>(options =>
+      options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
 
 var app = builder.Build();

@@ -9,9 +9,10 @@ namespace MonoPraksa.Repository
 {
     public interface IWeatherForecastRepository
     {
-        public IEnumerable<WeatherForecast> GetAllWeatherForecasts();
-        public WeatherForecast GetById(int id);
-        public void Post(WeatherForecast weatherForecast);
-        public void Delete(WeatherForecast weatherForecast);
+        public Task<IEnumerable<WeatherForecast>> GetAllWeatherForecastsAsync();
+        public Task<WeatherForecast> GetById(int id);
+        public Task Post(WeatherForecast weatherForecast);
+        public Task Delete(WeatherForecast weatherForecast);
+        public Task Update(WeatherForecast weatherForecast);
     }
 }

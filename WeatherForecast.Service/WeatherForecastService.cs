@@ -12,23 +12,26 @@ namespace MonoPraksa.Service
         {
             this.weatherForecastRepository = weatherForecastRepository;
         }
-        public IEnumerable<WeatherForecast> GetAllWeatherForecasts()
+        public async Task<IEnumerable<WeatherForecast>> GetAllWeatherForecastsAsync()
         {
-            return weatherForecastRepository.GetAllWeatherForecasts();
+            return await weatherForecastRepository.GetAllWeatherForecastsAsync();
         }
 
-        public WeatherForecast GetById(int id)
+        public async Task<WeatherForecast> GetById(int id)
         {
             var weatherForecast = weatherForecastRepository.GetById(id);
             if (weatherForecast == null) return null;
-            return weatherForecast;
+            return await weatherForecast;
         }
 
         //Jel ovdje dobro slati body i cijeli objekt weatheForecastFilter ili preko querya da radim?
-        public IEnumerable<WeatherForecast> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter)
+        //treba refaktorirat metodu, ostalo jos dok sam radio sa statickom listom
+        public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter)
         {
             List<WeatherForecast> forecasts = new List<WeatherForecast>();
-            IEnumerable<WeatherForecast> weatherForecasts = weatherForecastRepository.GetAllWeatherForecasts();
+            IEnumerable<WeatherForecast> forecastsEnum = await weatherForecastRepository.GetAllWeatherForecastsAsync();
+            List<WeatherForecast> weatherForecasts = forecastsEnum.ToList();
+
             foreach (var forecast in weatherForecasts)
             {
                 if (forecast.TemperatureC >= weatherForecastFilter.TemperatureC && forecast.Date.CompareTo(weatherForecastFilter.Date) > 0)
@@ -39,32 +42,33 @@ namespace MonoPraksa.Service
             return forecasts;
         }
 
-        public bool Post(WeatherForecast weatherForecast)
+        public async Task<bool> Post(WeatherForecast weatherForecast)
         {
             if(weatherForecast == null) return false;
-            weatherForecastRepository.Post(weatherForecast);
+            await weatherForecastRepository.Post(weatherForecast);
             return true;
         }
 
-       public bool Delete(int id)
+       public async Task<bool> Delete(int id)
         {
-            var weatherForecast = weatherForecastRepository.GetById(id);
+            var weatherForecast = await weatherForecastRepository.GetById(id);
             if (weatherForecast == null)
             {
                 return false;
             }
-            weatherForecastRepository.Delete(weatherForecast);
+            await weatherForecastRepository.Delete(weatherForecast);
             return true; 
         }
         
-        public bool Put(int id, String newSummary)
+        public async Task<bool> Put(int id, String newSummary)
         {
-            var item = weatherForecastRepository.GetById(id);
+            var item = await weatherForecastRepository.GetById(id);
             if (item == null)
             {
                 return false;
             }
             item.Summary = newSummary;
+            await weatherForecastRepository.Update(item);
             return true;
         }
     }

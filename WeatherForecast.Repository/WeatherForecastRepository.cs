@@ -1,36 +1,47 @@
-﻿using MonoPraksa.Model;
+﻿using Microsoft.EntityFrameworkCore;
+using MonoPraksa.Model;
+using MonoPraksa.Common;
+using System.Collections.Generic;
 
 namespace MonoPraksa.Repository
 {
     public class WeatherForecastRepository : IWeatherForecastRepository
     {
-        public WeatherForecastRepository() { }
-
-        private static readonly List<WeatherForecast> weatherForecasts = new()
-        {
-            new WeatherForecast { Id = 0, Date = DateOnly.FromDateTime(DateTime.Now), TemperatureC = 20, Summary = "Mild" },
-            new WeatherForecast { Id = 1, Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)), TemperatureC = 25, Summary = "Warm" }
-        };
-
-        public IEnumerable<WeatherForecast> GetAllWeatherForecasts()
-        {
-            return weatherForecasts;
+        private readonly AppDbContext AppDbContext;
+        public WeatherForecastRepository(AppDbContext dbContext) {
+            AppDbContext = dbContext;
         }
 
-        public WeatherForecast GetById(int id)
+        public async Task<IEnumerable<WeatherForecast>> GetAllWeatherForecastsAsync()
         {
-            return weatherForecasts.FirstOrDefault(w => w.Id == id);
+            return await AppDbContext.WeatherForecasts.ToListAsync();
         }
 
-        public void Post(WeatherForecast weatherForecast)
+        public async Task<WeatherForecast> GetById(int id)
         {
-            weatherForecasts.Add(weatherForecast);
+            return await AppDbContext.WeatherForecasts.FindAsync(id);
         }
 
-        public void Delete(WeatherForecast weatherForecast)
+        public async Task Post(WeatherForecast weatherForecast)
         {
-            weatherForecasts.Remove(weatherForecast);
-
+            await AppDbContext.WeatherForecasts.AddAsync(weatherForecast);
+            await AppDbContext.SaveChangesAsync();
         }
+        public async Task Update(WeatherForecast weatherForecast)
+        {
+            AppDbContext.WeatherForecasts.Update(weatherForecast);
+            await AppDbContext.SaveChangesAsync();
+        }
+
+        public async Task Delete(WeatherForecast weatherForecast)
+        {
+            var item = await AppDbContext.WeatherForecasts.FindAsync(weatherForecast.Id);
+            if (item != null)
+            {
+                AppDbContext.WeatherForecasts.Remove(item);
+                await AppDbContext.SaveChangesAsync();
+            }
+        }
+        
     }
 }

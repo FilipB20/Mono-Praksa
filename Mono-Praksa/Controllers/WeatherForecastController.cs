@@ -23,38 +23,37 @@ namespace MonoPraksa.Controllers
         }
 
         [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        public async Task<IEnumerable<WeatherForecast>> Get()
         {
-            return weatherForecastService.GetAllWeatherForecasts();
-            return weatherForecastService.GetAllWeatherForecasts();
+            return await weatherForecastService.GetAllWeatherForecastsAsync();
         }
 
         [HttpGet("{id}",Name = "GetWeatherForecastById")]
-        public WeatherForecast GetById(int id)
+        public async Task<WeatherForecast> GetById(int id)
         {
-            return weatherForecastService.GetById(id);
+            return await weatherForecastService.GetById(id);
         }
 
         //Jel ovdje dobro slati body i cijeli objekt weatheForecastFilter ili preko querya da radim?
         [HttpGet("above-temperature",Name ="GetWeatherForecastsByTemperatureAbove")]
-        public IEnumerable<WeatherForecast> GetWeatherForecastsByTemperature([FromBody]WeatherForecastFilter weatherForecastFilter)
+        public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature([FromBody]WeatherForecastFilter weatherForecastFilter)
         {
-            return weatherForecastService.GetWeatherForecastsByTemperature(weatherForecastFilter);
+            return await weatherForecastService.GetWeatherForecastsByTemperature(weatherForecastFilter);
         }
 
         [HttpPost(Name ="PostWeatherForecast")]
-        public IActionResult Post([FromBody]WeatherForecast weatherForecast)
+        public async Task<IActionResult>Post([FromBody]WeatherForecast weatherForecast)
         {
-            if (weatherForecastService.Post(weatherForecast)){
+            if (await weatherForecastService.Post(weatherForecast)){
                 return Ok("Uspješno dodan novi izvještaj!\n");
             }
             return NotFound("Nije moguce dodati novi vremenski izvještaj!\n");
         }
 
         [HttpDelete("{id}",Name = "DeleteWeatherForecast")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (weatherForecastService.Delete(id))
+            if (await weatherForecastService.Delete(id))
             {
                 return Ok($"Uspješno obrisan izvještaj s ID: {id}!\n");
             }
@@ -62,9 +61,9 @@ namespace MonoPraksa.Controllers
         }
 
         [HttpPut("{id}", Name = "PutWeatherForecast")]
-        public IActionResult Put(int id, [FromBody] String newSummary)
+        public async Task<IActionResult> Put(int id, [FromBody] String newSummary)
         {
-            if (weatherForecastService.Put(id, newSummary)){
+            if (await weatherForecastService.Put(id, newSummary)){
                 return Ok($"Uspješno izmijenjen izvještaj s ID {id} i dodan je summary:{newSummary}\n");
             }
             return NotFound($"Ne postoji izvještaj s ID: {id}!");

@@ -1,19 +1,19 @@
-namespace MonoPraksa.Model
+﻿using System;
+using System.Collections.Generic;
+
+namespace MonoPraksa.Model;
+
+public partial class WeatherForecast
 {
-    public class WeatherForecast
-    {
-        public int Id { get; set; }
-        public DateOnly Date { get; set; }
+    public int Id { get; set; }
 
-        public int TemperatureC { get; set; }
+    public DateOnly Date { get; set; }
 
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    public int? TemperatureC { get; set; }
 
-        public string? Summary { get; set; }
+    public string? Summary { get; set; }
 
-        public override string ToString()
-        {
-            return Date.ToString()+" "+TemperatureC+" "+Summary+"\n";
-        }
-    }
+    public int? CityId { get; set; }
+
+    public virtual City? City { get; set; }
 }

@@ -10,12 +10,12 @@ namespace MonoPraksa.Service
 {
     public interface IWeatherForecastService
     {
-        IEnumerable<WeatherForecast> GetAllWeatherForecasts();
-        WeatherForecast GetById(int id);
-        IEnumerable<WeatherForecast> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter);
-        bool Post(WeatherForecast weatherForecast);
-        bool Put(int id, string weatherForecast);
-        bool Delete(int id);
+        Task<IEnumerable<WeatherForecast>> GetAllWeatherForecastsAsync();
+        Task<WeatherForecast> GetById(int id);
+        Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter);
+        Task<bool> Post(WeatherForecast weatherForecast);
+        Task<bool> Put(int id, string weatherForecast);
+        Task<bool> Delete(int id);
 
     }
 }
