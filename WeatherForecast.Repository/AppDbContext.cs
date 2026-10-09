@@ -17,7 +17,7 @@ public partial class AppDbContext : DbContext
     }
 
     public virtual DbSet<City> Cities { get; set; }
-
+    public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<WeatherForecast> WeatherForecasts { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -65,6 +65,15 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.CityId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("city_fk");
+        });
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.ToTable("users");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).UseIdentityAlwaysColumn().HasColumnName("id");
+            entity.Property(e => e.Username).HasColumnName("username");
+            entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
+            entity.Property(e => e.Role).HasColumnName("role");
         });
 
         OnModelCreatingPartial(modelBuilder);

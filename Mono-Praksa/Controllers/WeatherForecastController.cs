@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MonoPraksa.Model;
 using MonoPraksa.Service;
@@ -22,12 +23,14 @@ namespace MonoPraksa.Controllers
             this.weatherForecastService= weatherForecastService;
         }
 
+        [AllowAnonymous]
         [HttpGet(Name = "GetWeatherForecast")]
-        public async Task<IEnumerable<WeatherForecast>> Get()
+        public async Task<IEnumerable<WeatherForecast>> GetAll()
         {
             return await weatherForecastService.GetAllWeatherForecastsAsync();
         }
 
+        [Authorize]
         [HttpGet("{id}",Name = "GetWeatherForecastById")]
         public async Task<WeatherForecast> GetById(int id)
         {
@@ -41,6 +44,7 @@ namespace MonoPraksa.Controllers
             return await weatherForecastService.GetWeatherForecastsByTemperature(weatherForecastFilter);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost(Name ="PostWeatherForecast")]
         public async Task<IActionResult>Post([FromBody]WeatherForecast weatherForecast)
         {
@@ -50,6 +54,7 @@ namespace MonoPraksa.Controllers
             return NotFound("Nije moguce dodati novi vremenski izvještaj!\n");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}",Name = "DeleteWeatherForecast")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -60,6 +65,7 @@ namespace MonoPraksa.Controllers
             return NotFound($"Ne postoji izvjestaj sa ID: {id}!\n");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}", Name = "PutWeatherForecast")]
         public async Task<IActionResult> Put(int id, [FromBody] String newSummary)
         {
