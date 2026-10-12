@@ -6,22 +6,26 @@ namespace MonoPraksa.Service
 {
     public class WeatherForecastService : IWeatherForecastService
     {
-        private IWeatherForecastRepository weatherForecastRepository;
+        private readonly IWeatherForecastRepository _weatherForecastRepository;
 
         public WeatherForecastService(IWeatherForecastRepository weatherForecastRepository)
         {
-            this.weatherForecastRepository = weatherForecastRepository;
+            this._weatherForecastRepository = weatherForecastRepository;
         }
         public async Task<IEnumerable<WeatherForecast>> GetAllWeatherForecastsAsync()
         {
-            return await weatherForecastRepository.GetAllWeatherForecastsAsync();
+            return await _weatherForecastRepository.GetAllWeatherForecastsAsync();
         }
 
         public async Task<WeatherForecast> GetById(int id)
         {
-            var weatherForecast = weatherForecastRepository.GetById(id);
-            if (weatherForecast == null) return null;
-            return await weatherForecast;
+            var weatherForecast = await _weatherForecastRepository.GetById(id);
+            if (weatherForecast == null)
+            {
+                return null;
+            }
+
+            return weatherForecast;
         }
 
         //Jel ovdje dobro slati body i cijeli objekt weatheForecastFilter ili preko querya da radim?
@@ -29,7 +33,7 @@ namespace MonoPraksa.Service
         public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter)
         {
             List<WeatherForecast> forecasts = new List<WeatherForecast>();
-            IEnumerable<WeatherForecast> forecastsEnum = await weatherForecastRepository.GetAllWeatherForecastsAsync();
+            IEnumerable<WeatherForecast> forecastsEnum = await _weatherForecastRepository.GetAllWeatherForecastsAsync();
             List<WeatherForecast> weatherForecasts = forecastsEnum.ToList();
 
             foreach (var forecast in weatherForecasts)
@@ -45,30 +49,30 @@ namespace MonoPraksa.Service
         public async Task<bool> Post(WeatherForecast weatherForecast)
         {
             if(weatherForecast == null) return false;
-            await weatherForecastRepository.Post(weatherForecast);
+            await _weatherForecastRepository.Post(weatherForecast);
             return true;
         }
 
        public async Task<bool> Delete(int id)
         {
-            var weatherForecast = await weatherForecastRepository.GetById(id);
+            var weatherForecast = await _weatherForecastRepository.GetById(id);
             if (weatherForecast == null)
             {
                 return false;
             }
-            await weatherForecastRepository.Delete(weatherForecast);
+            await _weatherForecastRepository.Delete(weatherForecast);
             return true; 
         }
         
         public async Task<bool> Put(int id, String newSummary)
         {
-            var item = await weatherForecastRepository.GetById(id);
+            var item = await _weatherForecastRepository.GetById(id);
             if (item == null)
             {
                 return false;
             }
             item.Summary = newSummary;
-            await weatherForecastRepository.Update(item);
+            await _weatherForecastRepository.Update(item);
             return true;
         }
     }

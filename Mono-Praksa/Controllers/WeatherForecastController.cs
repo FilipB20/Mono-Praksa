@@ -12,11 +12,6 @@ namespace MonoPraksa.Controllers
         IWeatherForecastService weatherForecastService;
         private readonly ILogger<WeatherForecastController> _logger;
 
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         public WeatherForecastController(ILogger<WeatherForecastController> logger,IWeatherForecastService weatherForecastService)
         {
             _logger = logger;
@@ -37,16 +32,15 @@ namespace MonoPraksa.Controllers
             return await weatherForecastService.GetById(id);
         }
 
-        //Jel ovdje dobro slati body i cijeli objekt weatheForecastFilter ili preko querya da radim?
         [HttpGet("above-temperature",Name ="GetWeatherForecastsByTemperatureAbove")]
-        public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature([FromBody]WeatherForecastFilter weatherForecastFilter)
+        public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature([FromQuery]WeatherForecastFilter weatherForecastFilter)
         {
             return await weatherForecastService.GetWeatherForecastsByTemperature(weatherForecastFilter);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpPost(Name ="PostWeatherForecast")]
-        public async Task<IActionResult>Post([FromBody]WeatherForecast weatherForecast)
+        public async Task<IActionResult>Post([FromQuery]WeatherForecast weatherForecast)
         {
             if (await weatherForecastService.Post(weatherForecast)){
                 return Ok("Uspješno dodan novi izvještaj!\n");
