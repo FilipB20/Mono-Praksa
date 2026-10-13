@@ -14,8 +14,8 @@ namespace MonoPraksa.Service;
 
 public class AuthService : IAuthService
 {
-    private readonly IUserRepository userRepository;
-    private readonly IConfiguration configuration;
+    private readonly IUserRepository _userRepository;
+    private readonly IConfiguration _configuration;
 
     public AuthService(IUserRepository userRepository, IConfiguration configuration)
     {
@@ -25,7 +25,7 @@ public class AuthService : IAuthService
 
     public async Task<bool> RegisterAsync(UserRegisterDto dto)
     {
-        var existing = await userRepository.GetByUsernameAsync(dto.Username);
+        var existing = await _userRepository.GetByUsernameAsync(dto.Username);
         if (existing != null)
         {
             return false;
@@ -38,13 +38,13 @@ public class AuthService : IAuthService
             Role = "User"
         };
 
-        await userRepository.AddAsync(user);
+        await _userRepository.AddAsync(user);
         return true;
     }
 
     public async Task<string?> LoginAsync(UserLoginDto dto)
     {
-        var user = await userRepository.GetByUsernameAsync(dto.Username);
+        var user = await _userRepository.GetByUsernameAsync(dto.Username);
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
         {
             return null;
@@ -62,12 +62,12 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Role, user.Role)
         };
 
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: configuration["Jwt:Issuer"],
-            audience: configuration["Jwt:Audience"],
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(2),
             signingCredentials: creds
