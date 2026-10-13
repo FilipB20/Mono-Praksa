@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MonoPraksa.Model;
 using MonoPraksa.Repository;
+using MonoPraksa.Common;
 
 namespace MonoPraksa.Service
 {
@@ -22,14 +23,12 @@ namespace MonoPraksa.Service
             var weatherForecast = await _weatherForecastRepository.GetById(id);
             if (weatherForecast == null)
             {
-                return null;
+                throw new NotFoundException($"Nije moguce pronaci izvjestaj sa ID: {id}\n");
             }
 
             return weatherForecast;
         }
 
-        //Jel ovdje dobro slati body i cijeli objekt weatheForecastFilter ili preko querya da radim?
-        //treba refaktorirat metodu, ostalo jos dok sam radio sa statickom listom
         public async Task<IEnumerable<WeatherForecast>> GetWeatherForecastsByTemperature(WeatherForecastFilter weatherForecastFilter)
         {
             List<WeatherForecast> forecasts = new List<WeatherForecast>();
@@ -58,7 +57,7 @@ namespace MonoPraksa.Service
             var weatherForecast = await _weatherForecastRepository.GetById(id);
             if (weatherForecast == null)
             {
-                return false;
+                throw new NotFoundException($"Nije moguce pronaci izvjestaj sa ID: {id}\n");
             }
             await _weatherForecastRepository.Delete(weatherForecast);
             return true; 
@@ -69,10 +68,10 @@ namespace MonoPraksa.Service
             var item = await _weatherForecastRepository.GetById(id);
             if (item == null)
             {
-                return false;
+                throw new NotFoundException($"Nije moguce pronaci izvjestaj sa ID: {id}\n");
             }
             item.Summary = newSummary;
-            await _weatherForecastRepository.Update(item);
+            await _weatherForecastRepository.UpdateAsync(item);
             return true;
         }
     }

@@ -13,6 +13,6 @@ namespace MonoPraksa.Repository
         public Task<WeatherForecast> GetById(int id);
         public Task Post(WeatherForecast weatherForecast);
         public Task Delete(WeatherForecast weatherForecast);
-        public Task Update(WeatherForecast weatherForecast);
+        public Task UpdateAsync(WeatherForecast weatherForecast);
     }
 }
