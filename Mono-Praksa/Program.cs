@@ -40,10 +40,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+// CORS za React (Vite)
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+        policy.WithOrigins("http://localhost:5173")
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -51,6 +59,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("Frontend");      // prije autentikacije i autorizacije
 
 app.UseAuthentication();
 app.UseAuthorization();
