@@ -29,7 +29,7 @@ namespace MonoPraksa.Controllers
             return Ok(forecasts);
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}",Name = "GetWeatherForecastById")]
         public async Task<ActionResult<WeatherForecast>> GetById(int id)
         {
@@ -58,7 +58,7 @@ namespace MonoPraksa.Controllers
             return Ok(forecasts.ToList());
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPost(Name = "PostWeatherForecast")]
         public async Task<IActionResult> Post([FromBody] WeatherForecast weatherForecast)
         {
@@ -74,7 +74,7 @@ namespace MonoPraksa.Controllers
             return Created();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}",Name = "DeleteWeatherForecast")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -89,7 +89,7 @@ namespace MonoPraksa.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}", Name = "PutWeatherForecast")]
         public async Task<IActionResult> Put(int id, [FromBody] String newSummary)
         {
