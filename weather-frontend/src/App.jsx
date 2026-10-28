@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import RegisterLoginPage from "./components/RegisterLoginPage";
 
 const API_URL = "https://localhost:7263";
 
@@ -195,8 +196,13 @@ function App() {
           </form>
 
           {submitError && <p className="message error">{submitError}</p>}
+          
         </aside>
       </div>
+      <div>
+          <h1>Weather App</h1>
+          <RegisterLoginPage />
+          </div>
     </div>
   );
 }
