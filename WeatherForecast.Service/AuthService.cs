@@ -19,8 +19,8 @@ public class AuthService : IAuthService
 
     public AuthService(IUserRepository userRepository, IConfiguration configuration)
     {
-        userRepository = userRepository;
-        configuration = configuration;
+        _userRepository = userRepository;
+        _configuration = configuration;
     }
 
     public async Task<bool> RegisterAsync(UserRegisterDto dto)

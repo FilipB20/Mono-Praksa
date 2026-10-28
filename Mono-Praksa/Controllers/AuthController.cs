@@ -16,7 +16,6 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [Authorize]
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto dto)
     {
@@ -27,7 +26,6 @@ public class AuthController : ControllerBase
         return Ok("Registracija uspješna.");
     }
 
-    [Authorize]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto dto)
     {
