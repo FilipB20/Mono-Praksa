@@ -2,13 +2,14 @@ import { useState } from "react";
 
 const API_URL = "https://localhost:7263";
 
-function RegisterLoginPage() {
+function RegisterLoginPage({onLogin}) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [token,setToken] = useState(null);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [isRegistering, setRegistering] = useState(true);
+  const [isLoggingIn,setLoggingIn] = useState(false);
 
   async function handleRegister() {
     setSubmitError(null);
@@ -56,7 +57,7 @@ function RegisterLoginPage() {
         throw new Error(text || `Greška: ${response.status}`);
       }
     const data = await response.json();
-    setToken(data.token);
+    onLogin(data.token);
       setUsername("");
       setPassword("");
     } catch (error) {
@@ -68,10 +69,19 @@ function RegisterLoginPage() {
 
   return (
     <div>
+      <button onClick={()=> {
+        setLoggingIn(true);
+        setRegistering(false);}}>
+          Prijava</button>
+      <button onClick={()=>{
+        setRegistering(true);
+        setLoggingIn(false);
+      }}>Registracija</button>
       <input
         type="text"
         value={username}
         onChange={(event) => setUsername(event.target.value)}
+        placeholder="Vaše korisničko ime"
       ></input>
 
       <br></br>
@@ -80,18 +90,17 @@ function RegisterLoginPage() {
         type="password"
         value={password}
         onChange={(event) => setPassword(event.target.value)}
+        placeholder="Vaša zaporka"
       ></input>
 
       <br></br>
-
-      <button onClick={handleRegister} disabled={submitting} >
+      {isRegistering && <button onClick={handleRegister} disabled={submitting} >
             {submitting ? "Registriranje..." : "Registriraj se!"}
-      </button>
+      </button>}
       <br></br>
-      <button onClick={handleLogin} disabled={submitting}>
+      {isLoggingIn && <button onClick={handleLogin} disabled={submitting}>
             {submitting ? "Prijavljivanje..." : "Prijavi se!"}
-      </button>
-            {token && <p>Prijavljen si!</p>}
+      </button>}
             {submitError && <p className="message error">{submitError}</p>}
     </div>
   );

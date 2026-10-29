@@ -10,6 +10,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [token,setToken] = useState(null);
 
   // State for the date filter.
   const [date, setDate] = useState("");
@@ -21,6 +22,16 @@ function App() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
+  //State for delete form
+  const [deleteError,setDeleteError]=useState(null);
+  const [deleting,setDeleting]=useState(false);
+  const [idToDelete,setIdToDelete]=useState("");
+
+  //State for put form
+  const [putError,setPutError]=useState(null);
+  const [putting,setPutting]=useState(false);
+  const [idToPut,setIdToPut]=useState("");
+
   // Load forecasts on page load and whenever refreshKey changes.
   useEffect(() => {
     async function loadForecasts() {
@@ -28,7 +39,11 @@ function App() {
       setError(null);
 
       try {
-        const response = await fetch(`${API_URL}/WeatherForecast`);
+        const response = await fetch(`${API_URL}/WeatherForecast`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`Greška: ${response.status}`);
@@ -42,9 +57,10 @@ function App() {
         setLoading(false);
       }
     }
-
+    if (token){
     loadForecasts();
-  }, [refreshKey]);
+    }
+  }, [token,refreshKey]);
 
   // Send a new forecast to the backend.
   async function handleSubmit(event) {
@@ -57,6 +73,7 @@ function App() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           date: newDate,
@@ -82,6 +99,69 @@ function App() {
       setSubmitting(false);
     }
   }
+  async function handleForecastDelete(id){
+    setDeleteError(null);
+    setDeleting(true);
+    try{
+      const response = await fetch(`${API_URL}/WeatherForecast/${id}`,{
+        method: "DELETE",
+        headers:{
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Greška: ${response.status}`);
+      }
+      setRefreshKey((value) => value + 1);
+    }
+    catch(error){
+      setDeleteError(error.message);
+    }
+    finally{
+      setDeleting(false);
+    }
+  }
+
+  async function handleForecastPut(id){
+    setPutError(null);
+    setPutting(true);
+    try{
+      const response = await fetch(`${API_URL}/WeatherForecast/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          summary: newSummary === "" ? null : newSummary,
+        }),
+      });
+
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Greška: ${response.status}`);
+      }
+
+      // Clear the form and reload the list.
+      setNewSummary("");
+      setRefreshKey((value) => value + 1);
+    }
+    catch(error){
+      setPutError(error.message);
+    }
+    finally{
+      setPutting(false);
+    }
+  }
+
+  function handleLogout(){
+    setToken(null);
+    setForecasts([]);
+    setError(null);
+    setDate("");
+    setSubmitError(null);
+  }
 
   // Filter the forecasts in the browser.
   const filteredForecasts = forecasts.filter((forecast) =>
@@ -89,122 +169,142 @@ function App() {
   );
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>Vremenska prognoza</h1>
-        <p>Pregledajte prognoze po datumu ili dodajte novu.</p>
-      </header>
+  <div className="app">
+    {token ? (
+      <>
+        <header className="app-header">
+          <button onClick={handleLogout}>Odjavi se</button>
+          <h1>Vremenska prognoza</h1>
+          <p>Pregledajte prognoze po datumu ili dodajte novu.</p>
+        </header>
 
-      <div className="layout">
-        <main className="panel">
-          <div className="panel-heading">
-            <h2>Prognoze</h2>
-            <span className="badge">{filteredForecasts.length}</span>
-          </div>
+        <div className="layout">
+          <main className="panel">
+            <div className="panel-heading">
+              <h2>Prognoze</h2>
+              <span className="badge">{filteredForecasts.length}</span>
+            </div>
 
-          <div className="field filter-field">
-            <label htmlFor="filterDate">Filtriraj po datumu</label>
-            <input
-              id="filterDate"
-              type="date"
-              value={date}
-              onChange={(event) => setDate(event.target.value)}
-            />
-          </div>
-
-          <p className="filter-status">
-            {date ? `Prikaz za ${date}` : "Prikaz svih prognoza"}
-          </p>
-
-          {loading && <p className="message">Učitavanje...</p>}
-          {error && <p className="message error">{error}</p>}
-
-          {!loading && !error && filteredForecasts.length === 0 && (
-            <p className="empty-state">Nema prognoza za odabrani datum.</p>
-          )}
-
-          {!loading && !error && filteredForecasts.length > 0 && (
-            <ul className="forecast-list">
-              {filteredForecasts.map((forecast) => (
-                <li className="forecast-item" key={forecast.id}>
-                  <span className="forecast-date">{forecast.date}</span>
-                  <span className="forecast-temp">
-                    {forecast.temperatureC == null
-                      ? "–"
-                      : `${forecast.temperatureC}°C`}
-                  </span>
-                  <span className="forecast-summary">
-                    {forecast.summary || "Bez opisa"}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </main>
-
-        <aside className="panel panel-form">
-          <div className="panel-heading">
-            <h2>Dodaj prognozu</h2>
-          </div>
-
-          <p className="panel-description">
-            Unesite datum, temperaturu i kratki opis.
-          </p>
-
-          <form className="forecast-form" onSubmit={handleSubmit}>
-            <div className="field">
-              <label htmlFor="newDate">Datum</label>
+            <div className="field filter-field">
+              <label htmlFor="filterDate">Filtriraj po datumu</label>
               <input
-                id="newDate"
+                id="filterDate"
                 type="date"
-                value={newDate}
-                onChange={(event) => setNewDate(event.target.value)}
-                required
+                value={date}
+                onChange={(event) => setDate(event.target.value)}
               />
             </div>
 
-            <div className="field">
-              <label htmlFor="newTemperature">Temperatura (°C)</label>
-              <input
-                id="newTemperature"
-                type="number"
-                value={newTemperature}
-                onChange={(event) => setNewTemperature(event.target.value)}
-                placeholder="npr. 21"
-              />
+            <p className="filter-status">
+              {date ? `Prikaz za ${date}` : "Prikaz svih prognoza"}
+            </p>
+
+            {loading && <p className="message">Učitavanje...</p>}
+            {error && <p className="message error">{error}</p>}
+
+            {!loading && !error && filteredForecasts.length === 0 && (
+              <p className="empty-state">
+                Nema prognoza za odabrani datum.
+              </p>
+            )}
+
+            {!loading && !error && filteredForecasts.length > 0 && (
+              <ul className="forecast-list">
+                {filteredForecasts.map((forecast) => (
+                  <li className="forecast-item" key={forecast.id}>
+                    <span className="forecast-date">{forecast.date}</span>
+                    <span className="forecast-temp">
+                      {forecast.temperatureC == null
+                        ? "–"
+                        : `${forecast.temperatureC}°C`}
+                    </span>
+                    <span className="forecast-summary">
+                      {forecast.summary || "Bez opisa"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </main>
+
+          <aside className="panel panel-form">
+            <div className="panel-heading">
+              <h2>Dodaj prognozu</h2>
             </div>
 
-            <div className="field">
-              <label htmlFor="newSummary">Opis</label>
-              <input
-                id="newSummary"
-                type="text"
-                value={newSummary}
-                onChange={(event) => setNewSummary(event.target.value)}
-                placeholder="npr. Sunčano"
-                maxLength={100}
-              />
+            <p className="panel-description">
+              Unesite datum, temperaturu i kratki opis.
+            </p>
+
+            <form className="forecast-form" onSubmit={handleSubmit}>
+              <div className="field">
+                <label htmlFor="newDate">Datum</label>
+                <input
+                  id="newDate"
+                  type="date"
+                  value={newDate}
+                  onChange={(event) => setNewDate(event.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="newTemperature">
+                  Temperatura (°C)
+                </label>
+                <input
+                  id="newTemperature"
+                  type="number"
+                  value={newTemperature}
+                  onChange={(event) =>
+                    setNewTemperature(event.target.value)
+                  }
+                  placeholder="npr. 21"
+                />
+              </div>
+
+              <div className="field">
+                <label htmlFor="newSummary">Opis</label>
+                <input
+                  id="newSummary"
+                  type="text"
+                  value={newSummary}
+                  onChange={(event) =>
+                    setNewSummary(event.target.value)
+                  }
+                  placeholder="npr. Sunčano"
+                  maxLength={100}
+                />
+              </div>
+
+              <button
+                className="submit-button"
+                type="submit"
+                disabled={submitting}
+              >
+                {submitting ? "Dodavanje..." : "Dodaj prognozu"}
+              </button>
+            </form>
+            <div>
+              <input type="number" onChange={(event) => setIdToDelete(Number(event.target.value))} placeholder="Unesite ID prognoze koju želite obrisati."></input>
+              <button onClick={()=>handleForecastDelete(idToDelete)}>Obriši!</button>
+              {deleteError && <p className="message error">{deleteError}</p>}
             </div>
 
-            <button
-              className="submit-button"
-              type="submit"
-              disabled={submitting}
-            >
-              {submitting ? "Dodavanje..." : "Dodaj prognozu"}
-            </button>
-          </form>
-
-          {submitError && <p className="message error">{submitError}</p>}
-          
-        </aside>
-      </div>
+            {submitError && (
+              <p className="message error">{submitError}</p>
+            )}
+          </aside>
+        </div>
+      </>
+    ) : (
       <div>
-          <h1>Weather App</h1>
-          <RegisterLoginPage />
-          </div>
-    </div>
-  );
+        <h1>Weather App</h1>
+        <RegisterLoginPage onLogin={setToken} />
+      </div>
+    )}
+  </div>
+);
 }
 
 export default App;
