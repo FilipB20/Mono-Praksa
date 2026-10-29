@@ -7,6 +7,7 @@ namespace MonoPraksa.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class WeatherForecastController : ControllerBase
     {
         IWeatherForecastService _weatherForecastService;
@@ -18,7 +19,6 @@ namespace MonoPraksa.Controllers
             this._weatherForecastService= weatherForecastService;
         }
 
-        [AllowAnonymous]
         [HttpGet(Name = "GetWeatherForecast")]
         public async Task<ActionResult<IEnumerable<WeatherForecast>>> GetAll()
         {
@@ -29,7 +29,6 @@ namespace MonoPraksa.Controllers
             return Ok(forecasts);
         }
 
-        //[Authorize]
         [HttpGet("{id}",Name = "GetWeatherForecastById")]
         public async Task<ActionResult<WeatherForecast>> GetById(int id)
         {
@@ -58,7 +57,7 @@ namespace MonoPraksa.Controllers
             return Ok(forecasts.ToList());
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpPost(Name = "PostWeatherForecast")]
         public async Task<IActionResult> Post([FromBody] WeatherForecast weatherForecast)
         {
